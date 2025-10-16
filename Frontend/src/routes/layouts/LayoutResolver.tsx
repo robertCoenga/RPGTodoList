@@ -1,5 +1,5 @@
 import type { AppRoute } from "../../types/routes.types";
 
-export function LayoutResolver({ element }: AppRoute) {
-  return <>{children}</>;
+export function LayoutResolver({ element }: AppRoute, routes: AppRoute[]) {
+  return <>{element}</>;
 }
