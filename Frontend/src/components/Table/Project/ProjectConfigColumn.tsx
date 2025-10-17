@@ -48,7 +48,7 @@ export function ProjectConfigColumn(): ColumnDef<Project>[] {
               />
             </button>
             <button className="cursor-pointer">
-              <GiDeathZone color="#EF4444" name="Deletar" className="w-7 h-7" />
+              <GiDeathZone color="#BE002A" name="Deletar" className="w-7 h-7" />
             </button>
           </div>
         ),

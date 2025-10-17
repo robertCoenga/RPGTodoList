@@ -37,7 +37,7 @@ export function ProjectTable({ data }: { data: Project[] }) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row, idx) => (
-            <tr key={row.id} className={idx % 2 != 0 ? "bg-[#55b196]" : " "}>
+            <tr key={row.id} className={idx % 2 != 0 ? "bg-neutral-700" : " "}>
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={row.id}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "./Closed.css";
+import "../deadline/Deadline.css";
 
 type Props = {
   animationTime?: number; // em segundos
@@ -22,10 +22,10 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
     const progressFill = container.querySelector<SVGElement>(
       "#progress-time-fill"
     );
-    const deathGroup = container.querySelector<SVGGElement>("#death-group");
+    const angelGroup = container.querySelector<SVGGElement>("#angel-group");
     if (progressFill)
       progressFill.style.animationDuration = `${animationTime}s`;
-    if (deathGroup) deathGroup.style.animationDuration = `${animationTime}s`;
+    if (angelGroup) angelGroup.style.animationDuration = `${animationTime}s`;
   };
 
   const applyArmSpeedSequence = () => {
@@ -124,13 +124,11 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
   }, [animationTime, initialDays]); // reinicia se animationTime ou initialDays mudarem
 
   return (
-    <div className="relative w-full max-w-500 h-full mx-auto my-10 select-none">
-      <svg
-        preserveAspectRatio="none"
-        id="line"
-        viewBox="0 0 581 158"
-        className="closed"
-      >
+    <div
+      className="relative w-full  max-w-48  h-full mx-auto my-10 select-none"
+      style={{ transform: "scaleX(-1)" }}
+    >
+      <svg preserveAspectRatio="none" id="line" viewBox="0 0 581 158">
         <g id="fire">
           {/* <rect id="mask-fire-black" x="511" y="41" width="38" height="34" /> */}
           <g>
@@ -204,16 +202,23 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
             fill="#6bd1ce"
             width="586"
             height="103"
-            className="animate-[progress-fill_linear_20s_infinite] origin-[center_right]"
+            className="animate-[progress-fill_linear_20s_infinite] origin-[center_left]"
           />
         </g>
 
         <g
-          id="death-group"
-          className="animate-[angel-walk_20s_linear_infinite] origin-[center_right] closed"
+          id="angel-group"
+          className="animate-[walk_20s_linear_infinite] origin-[center_left]"
         >
           <path
-            id="death"
+            id="angel-halo"
+            fill="rgba(255, 255, 255, 0)"
+            stroke="#6bd1ce"
+            strokeWidth={4}
+            d="M -42.093 39.421 C -39.399 39.421 -35.983 39.068 -37.329 36.735 C -37.784 35.948 -39.112 35.41 -40.009 35.093 C -40.532 34.908 -40.292 34.961 -41.27 34.657 C -42.426 34.298 -44.814 33.947 -46.744 34.291 C -48.232 34.556 -48.935 35.414 -49.208 35.887 C -49.343 36.121 -49.555 37.332 -47.991 38.151 C -46.455 38.957 -43.308 39.372 -41.671 39.446"
+          />
+          <path
+            id="angel"
             fill="#6bd1ce"
             d="M-46.25,40.416c-5.42-0.281-8.349,3.17-13.25,3.918c-5.716,0.871-10.583-0.918-10.583-0.918
                                              C-67.5,49-65.175,50.6-62.083,52c5.333,2.416,4.083,3.5,2.084,4.5c-16.5,4.833-15.417,27.917-15.417,27.917L-75.5,84.75
@@ -223,8 +228,14 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
                                              C-39.005,45.523-39.073,48.8-40,51.959z"
           />
           <path
-            id="death-arm"
-            className="animate-[angel-move-arm_6s_ease_infinite_reverse]  origin-[-60px_74px]"
+            id="angel-wing"
+            fill="#6bd1ce"
+            className="animate-[move-wing_4s_ease_infinite] origin-[-48px_center]"
+            d="M -88.234 35.308 C -81.273 35.308 -76.922 42.844 -80.402 48.873 C -80.624 49.257 -80.874 49.625 -81.15 49.972 C -84.793 54.552 -82.112 61.359 -76.323 62.224 C -76.068 62.262 -75.811 62.287 -75.553 62.299 C -75.295 62.311 -75.153 65.549 -75.153 65.549 C -75.153 70.868 -79.751 77.038 -85.058 77.401 L -90.803 76.147 C -90.527 76.864 -82.723 74.09 -83.466 72.157 L -84.201 68.949 L -87.553 66.903 L -91.473 68.154 L -94.726 65.318 L -91.139 63.817 L -92.838 61.881 L -97.145 63.4 L -101.31 59.563 L -96.644 58.312 L -98.145 56.06 L -102.89 56.811 L -106.53 52.884 L -100.16 52.033 L -102.05 48.794 L -109.47 49.287 L -112.14 45.064 L -103.86 45.044 L -105.41 41.881 L -117.17 41.631 L -121.25 35.949 L -88.234 35.308 Z"
+          />
+          <path
+            id="angel-arm"
+            className="animate-[move-arm_3s_ease_infinite]  origin-[-60px_74px]"
             fill="#6bd1ce"
             d="M-53.375,75.25c0,0,9.375,2.25,11.25,0.25s2.313-2.342,3.375-2.791
                                                  c1.083-0.459,4.375-1.75,4.292-4.75c-0.101-3.627,0.271-4.594,1.333-5.043c1.083-0.457,2.75-1.666,2.75-1.666
@@ -232,34 +243,30 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
                                                  s-2.667,2.791-3.417,0.125S-49.833,61-49.833,61s-3.417,1.416-3.417,1.541s-1.25,5.834-1.25,5.834l-0.583,5.833L-53.375,75.25z"
           />
           <path
-            id="death-tool"
-            className="animate-[angel-move-tool_6s_ease_infinite_reverse] origin-[48px_center]"
+            id="angel-tool"
+            className="animate-[move-tool_3s_ease_infinite] origin-[-48px_center]"
             fill="#6bd1ce"
-            d="M -60.818 87.616 L -51.37 71.534 C -51.765 71.291 -52.2 70.608 -52.771 69.193 C -53.035 68.533 -53.977 68.909 -54.9 68.43 L -63.679 84.786 L -60.818 87.616 Z M -40.09 57.753 L -26.313 32.145 L -23.138 25.962 L -22.912 12.916 L -32.021 18.432 L -47.901 49.76 L -47.086 53.377 L -44.805 52.109 L -28.308 21.295 L -26.392 22.87 L -42.188 53.14 L -42.283 58.247 L -40.09 57.753 Z
-
-M -40.252 77.924 L -39.584 74.815 L -46.797 67.879 L -47.311 67.387 L -46.892 66.805 C -45.201 64.444 -44.834 60.037 -44.624 56.849 L -50.985 66.789 L -40.252 77.924 Z M -63.577 58.155 L -52.207 65.714 L -45.741 56.092 C -48.093 57.012 -51.135 59.683 -52.405 62.059 L -52.734 62.459 L -53.291 62.042 L -61.163 56.162 L -63.577 58.155 Z M -39.07 73.358 C -38.814 72.452 -38.594 71.463 -38.414 70.43 L -44.724 65.923 C -44.964 66.359 -45.218 66.783 -45.485 67.189 L -39.07 73.358 Z M -60.135 55.141 L -53.135 60.369 C -52.887 59.946 -52.622 59.533 -52.341 59.13 L -57.957 53.506 C -58.742 54.027 -59.478 54.577 -60.135 55.141 Z M -44.072 64.62 L -38.172 68.834 C -38.044 67.867 -37.953 66.879 -37.896 65.897 L -43.435 63.015 C -43.624 63.563 -43.837 64.101 -44.072 64.62 Z M -51.483 58.003 C -51.133 57.581 -50.763 57.177 -50.376 56.797 L -54.429 51.53 C -55.212 51.896 -55.986 52.304 -56.734 52.744 L -51.483 58.003 Z M -43.002 61.587 L -37.834 64.274 C -37.819 63.311 -37.842 62.369 -37.905 61.476 L -42.678 60.049 C -42.764 60.569 -42.872 61.083 -43.002 61.587 Z M -49.347 55.875 C -48.976 55.576 -48.592 55.298 -48.195 55.041 L -50.831 50.174 C -51.577 50.38 -52.35 50.644 -53.129 50.959 L -49.346 55.876 L -49.347 55.875 Z"
+            d="M -20.873 27.033 L -22.449 30.858 C -23.146 30.458 -23.255 30.505 -24.463 29.767 C -25.183 29.327 -22.366 28.123 -23.278 27.771 C -24.157 27.432 -25.159 26.576 -25.837 26.257 C -26.497 25.946 -26.04 28.751 -26.525 28.578 C -27.238 28.324 -27.763 27.315 -28.144 27.105 C -28.962 26.654 -29.553 28.996 -30.032 29.89 C -30.262 30.32 -26.423 30.066 -27.525 30.853 C -28.184 31.324 -30.321 32.121 -29.934 32.321 C -29.346 32.624 -27.192 33.7 -26.593 34.045 C -26.175 34.286 -26.425 31.522 -25.671 31.823 C -24.725 32.201 -24.016 32.689 -23.529 32.968 L -63.692 118.508 L -61.88 119.356 L -23.538 37.447 C -23.538 37.447 -20.608 33.897 -17.029 38.668 C -12.029 45.336 -13.627 48.548 -13.627 48.548 C -13.627 48.548 -6.191 38.617 -7.683 30.898 C -7.897 29.792 -9.934 30.406 -11.286 30.49 C -16.728 30.828 -19.583 29.144 -19.524 28.87 L -19.061 27.882 L -20.873 27.033 Z"
           />
         </g>
-        <g>
-          <path
-            id="designer-body"
-            fill="#FEFFFE"
-            d="M514.75,100.334c0,0,1.25-16.834-6.75-16.5c-5.501,0.229-5.583,3-10.833,1.666
+        <path
+          id="designer-body"
+          fill="#FEFFFE"
+          d="M514.75,100.334c0,0,1.25-16.834-6.75-16.5c-5.501,0.229-5.583,3-10.833,1.666
                                                    c-3.251-0.826-5.084-15.75-0.834-22c4.948-7.277,12.086-9.266,13.334-7.833c2.25,2.583-2,10.833-4.5,14.167
                                                    c-2.5,3.333-1.833,10.416,0.5,9.916s8.026-0.141,10,2.25c3.166,3.834,4.916,17.667,4.916,17.667l0.917,2.5l-4,0.167L514.75,100.334z
                                                    "
-          />
+        />
 
-          <circle
-            id="designer-head"
-            fill="#FEFFFE"
-            cx="516.083"
-            cy="53.25"
-            r="6.083"
-          />
-        </g>
+        <circle
+          id="designer-head"
+          fill="#FEFFFE"
+          cx="516.083"
+          cy="53.25"
+          r="6.083"
+        />
 
-        <g id="angel-designer-arm-grop">
+        <g id="designer-arm-grop">
           <path
             id="designer-arm"
             fill="#FEFFFE"
