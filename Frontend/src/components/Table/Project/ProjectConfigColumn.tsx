@@ -4,6 +4,7 @@ import { GiDeathZone, GiSheikahEye, GiWingedSword } from "react-icons/gi";
 import type { Project } from "../../../types/project.types";
 import { Closed } from "../../LodingBar/Closed/Closed";
 import { Deadline } from "../../LodingBar/deadline/Deadline";
+import { CreateProject } from "../../Modal/Project/CreateProject";
 
 export function ProjectConfigColumn(): ColumnDef<Project>[] {
   return useMemo(
@@ -29,7 +30,7 @@ export function ProjectConfigColumn(): ColumnDef<Project>[] {
         cell: () => <Closed />,
       },
       {
-        header: "Ações",
+        header: <CreateProject />,
         id: "acoes",
         cell: () => (
           <div className="flex justify-center gap-2">
@@ -47,7 +48,7 @@ export function ProjectConfigColumn(): ColumnDef<Project>[] {
                 className="w-7 h-7"
               />
             </button>
-            <button className="cursor-pointer">
+            <button className="cursor-pointer" onClick={() => alert("clickou")}>
               <GiDeathZone color="#BE002A" name="Deletar" className="w-7 h-7" />
             </button>
           </div>
