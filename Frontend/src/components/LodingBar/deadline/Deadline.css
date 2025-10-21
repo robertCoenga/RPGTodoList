@@ -63,6 +63,15 @@
   animation: show-flames 20s ease infinite, red-flame 100ms ease infinite;
   transform-origin: center bottom;
 }
+@keyframes angel-progress-fill {
+  0% {
+    x: -100%;
+  }
+
+  100% {
+    x: -3%;
+  }
+}
 
 @keyframes progress-fill {
   0% {

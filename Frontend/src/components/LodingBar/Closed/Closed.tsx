@@ -4,9 +4,26 @@ import "../deadline/Deadline.css";
 type Props = {
   animationTime?: number; // em segundos
   initialDays?: number;
+  done: number;
+  total: number;
 };
 
-export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
+export function Closed({
+  animationTime = 20,
+  initialDays = 7,
+  done,
+  total,
+}: Props) {
+  const distanciaTotal: number = 520; // valor máximo da animação original
+  let walkProgress: number = 0;
+  let progress = 0;
+  if (total != 0) {
+    progress = (done / total) * 97;
+    walkProgress = Math.floor((done / total) * distanciaTotal);
+    console.log(walkProgress);
+  }
+  const xValue = -100 + progress;
+
   const [day, setDay] = useState<number>(initialDays);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -196,19 +213,20 @@ export function Closed({ animationTime = 20, initialDays = 7 }: Props) {
           </clipPath>
           <rect
             id="progress-time-fill"
-            x="-100%"
+            x={`${xValue}%`}
             y="34"
             clipPath="url(#SVGID_2_)"
             fill="#6bd1ce"
             width="586"
             height="103"
-            className="animate-[progress-fill_linear_20s_infinite] origin-[center_left]"
+            className="transition-[x] duration-700 ease-linear origin-[center_left]"
           />
         </g>
 
         <g
           id="angel-group"
-          className="animate-[walk_20s_linear_infinite] origin-[center_left]"
+          transform={`translate(${walkProgress},0)`}
+          className="transition-transform duration-700 ease-linear origin-[center_left]"
         >
           <path
             id="angel-halo"

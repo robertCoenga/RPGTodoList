@@ -17,6 +17,20 @@ export const ProjectService = {
         name: "RPG - ToDoList",
         category: "Estudo",
         deadline: "2025-10-30",
+        tasks: [
+          {
+            description: "Desenvolver layout da tela de login",
+            conclude: true,
+          },
+          {
+            description: "Desenvolver componente de modal ",
+            conclude: true,
+          },
+          {
+            description: "Desenvolver expanded da listagem",
+            conclude: false,
+          },
+        ],
       },
     ];
 

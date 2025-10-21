@@ -25,6 +25,7 @@ type childrenProps = {
 };
 
 type ModalFooterProps = {
+  btnCloseLabel: string;
   className?: string;
   children: ReactNode;
 };
@@ -33,13 +34,17 @@ export function ModalBody({ className, children }: childrenProps) {
   return <div className={className}>{children}</div>;
 }
 
-export function ModalFooter({ className, children }: ModalFooterProps) {
+export function ModalFooter({
+  btnCloseLabel,
+  className,
+  children,
+}: ModalFooterProps) {
   const context = useContext(ModalContext);
   return (
-    <div className={className}>
+    <div className={`${className} text-white`}>
       <Button
-        label="Cancelar"
-        className="rounded-xl bg-red-500 w-20 h-7"
+        label={btnCloseLabel}
+        className="rounded-xl bg-red-700 w-20 h-7"
         onClick={() => context?.close()}
       />
       {children}
@@ -71,7 +76,7 @@ export function Modal({
           <ModalContext.Provider value={{ close: closeModal }}>
             <div
               id={modalId}
-              className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+              className="fixed inset-0 flex items-center justify-center bg-neutral-700/35 z-50"
               onClick={() => setShowModal(false)} // fecha ao clicar fora
             >
               <div
