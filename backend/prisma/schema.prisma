@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Player {
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  password String
+  level Int
+  xp Int
+  gold Float
+  class RpgClass @relation(fields: [class_id],references: [id])
+  class_id Int
+  status PlayerStatus?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model PlayerStatus {
+  id Int @id @default(autoincrement())
+  energy Int
+  health Int
+  focus Int
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int @unique
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model RpgClass {
+  id Int @id @default(autoincrement())
+  description String
+  type_class TypeClass @relation(fields: [typel_class_id], references: [id])
+  typel_class_id Int
+  players Player[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+}
+
+model TypeClass{
+  id Int @id @default(autoincrement())
+  description String
+  class RpgClass[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Buff {
+  id Int @id @default(autoincrement())
+  description String
+  type String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Skill {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  level Int
+  parent_id Int?
+  parent Skill? @relation("skillParent",fields: [parent_id], references: [id])
+  children Skill[] @relation("skillParent")
+  playerSkill PlayerSkill?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+}
+
+model PlayerSkill {
+  id Int @id @default(autoincrement())
+  skill_id Int @unique
+  skill Skill? @relation(fields: [skill_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Act {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  deadline DateTime
+  xp_reward Int
+  gold_reward Int
+  status Int
+  quests Quest[]
+  milestornes ActMilestones[]
+  inventory Inventory[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model ActMilestones {
+  id Int @id @default(autoincrement())
+  description String
+  finished Boolean
+  deadline DateTime
+  reward String
+  act_id Int
+  act Act @relation(fields: [act_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Quest {
+  id Int @id @default(autoincrement())
+  description String
+  data_inicio DateTime
+  data_fim DateTime
+  concluded Boolean
+  type_id Int
+  type QuestType @relation(fields: [type_id], references: [id])
+  compelexity Int
+  xp_reward Int
+  act_id Int?
+  act Act? @relation(fields: [act_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model QuestType {
+  id Int @id @default(autoincrement())
+  description String
+  quests Quest[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Inventory {
+  id Int @id @default(autoincrement())
+  description String
+  value Float
+  data DateTime
+  status Int
+  act_id Int?
+  act Act? @relation(fields: [act_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  
+}
+
+model Installments {
+  id Int @id @default(autoincrement())
+  qtd_installments Int
+  value Float
+  deadline DateTime
+  paid Boolean
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Calendar {
+  id Int @id @default(autoincrement())
+  data DateTime
+  is_feriado Boolean
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
