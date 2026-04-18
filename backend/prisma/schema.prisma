@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model Player {
@@ -18,9 +18,6 @@ model Player {
   name String
   username String @unique
   password String
-  level Int
-  xp Int
-  gold Float
   class RpgClass @relation(fields: [class_id],references: [id])
   class_id Int
   status PlayerStatus?
@@ -33,6 +30,9 @@ model PlayerStatus {
   energy Int
   health Int
   focus Int
+  level Int
+  xp Int
+  gold Float
   player Player @relation(fields: [player_id], references: [id])
   player_id Int @unique
   created_at  DateTime @default(now())
