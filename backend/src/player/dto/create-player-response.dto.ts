@@ -1,18 +1,20 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsObject, IsString } from 'class-validator';
+import { ClassDto } from './info/class.dto';
+import { PlayerStatusDto } from './info/player-status.dto';
 
 export class CreatePlayerResponseDto {
   @IsNumber()
-  id: number;
+  id!: number;
+
   @IsString()
-  name: string;
+  name!: string;
+
   @IsString()
-  username: string;
-  @IsNumber()
-  level: number;
-  @IsNumber()
-  xp: number;
-  @IsNumber()
-  gold: number;
-  @IsString()
-  class: string;
+  username!: string;
+
+  @IsObject()
+  class!: ClassDto;
+
+  @IsObject()
+  status!: PlayerStatusDto;
 }

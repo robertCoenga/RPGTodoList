@@ -1,33 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreatePlayerDto {
   @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
+  @IsString({ message: 'o campo name deve ser uma string' })
   @IsNotEmpty({ message: 'O campo é obrigatório' })
-  name: string;
+  name!: string;
+
   @ApiProperty({})
   @IsString({ message: 'o campo deve ser uma string' })
   @IsNotEmpty({ message: 'O campo é obrigatório' })
-  username: string;
+  username!: string;
+
   @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo é obrigatório' })
-  password: string;
+  @IsString({ message: 'o campo password deve ser uma string' })
+  @IsNotEmpty({ message: 'O campo password é obrigatório' })
+  password!: string;
+
   @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo é obrigatório' })
-  level: number;
-  @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo é obrigatório' })
-  xp: number;
-  @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo é obrigatório' })
-  gold: number;
-  @ApiProperty({})
-  @IsString({ message: 'o campo deve ser uma string' })
-  @IsNotEmpty({ message: 'O campo é obrigatório' })
-  class_id: number;
+  @IsNumber({}, { message: 'o campo class_id deve ser um número' })
+  @IsNotEmpty({ message: 'O campo class_id é obrigatório' })
+  @Type(() => Number)
+  class_id!: number;
 }

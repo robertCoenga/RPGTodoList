@@ -14,7 +14,7 @@ export class QuestService {
     try {
       const quests = await this.prismaService.quest.findMany({
         where: {
-          actId: actId.id,
+          act_id: actId.id,
         },
         select: {
           id: true,

@@ -5,7 +5,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -20,49 +19,64 @@ model Player {
   class RpgClass @relation(fields: [class_id],references: [id])
   class_id Int
   status PlayerStatus?
+  buffs Buff[]
+  skills Skill[]
+  acts Act[]
+  inventory Inventory[]
+  quests Quest[]
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model PlayerStatus {
   id Int @id @default(autoincrement())
-  energy Int
-  health Int
-  focus Int
-  level Int
-  xp Int
-  gold Float
+  energy Int @default(5)
+  health Int @default(10)
+  focus Int @default(5)
+  level Int @default(1)
+  xp Int @default(0)
+  gold Float @default(0)
   player Player @relation(fields: [player_id], references: [id])
   player_id Int @unique
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model RpgClass {
   id Int @id @default(autoincrement())
   description String
-  type_class TypeClass @relation(fields: [typel_class_id], references: [id])
-  typel_class_id Int
+  type_class RpgTypeClasses[]
   players Player[]
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 
 }
 
 model TypeClass{
   id Int @id @default(autoincrement())
   description String
-  class RpgClass[]
+  class RpgTypeClasses[]
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
+}
+
+model RpgTypeClasses {
+  class RpgClass @relation(fields: [class_id], references: [id])
+  class_id Int
+  type TypeClass @relation(fields: [type_id], references: [id])
+  type_id Int
+  assigned_at DateTime @default(now())
+  @@id([class_id, type_id])
 }
 
 model Buff {
   id Int @id @default(autoincrement())
   description String
   type String
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model Skill {
@@ -73,18 +87,11 @@ model Skill {
   parent_id Int?
   parent Skill? @relation("skillParent",fields: [parent_id], references: [id])
   children Skill[] @relation("skillParent")
-  playerSkill PlayerSkill?
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 
-}
-
-model PlayerSkill {
-  id Int @id @default(autoincrement())
-  skill_id Int @unique
-  skill Skill? @relation(fields: [skill_id], references: [id])
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
 }
 
 model Act {
@@ -94,12 +101,14 @@ model Act {
   deadline DateTime
   xp_reward Int
   gold_reward Int
-  status Int
+  status ActStatus @default(NAO_INICIADO)
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int
   quests Quest[]
   milestornes ActMilestones[]
   inventory Inventory[]
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model ActMilestones {
@@ -111,7 +120,7 @@ model ActMilestones {
   act_id Int
   act Act @relation(fields: [act_id], references: [id])
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model Quest {
@@ -120,6 +129,8 @@ model Quest {
   data_inicio DateTime
   data_fim DateTime
   concluded Boolean
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int
   type_id Int
   type QuestType @relation(fields: [type_id], references: [id])
   compelexity Int
@@ -127,7 +138,7 @@ model Quest {
   act_id Int?
   act Act? @relation(fields: [act_id], references: [id])
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model QuestType {
@@ -135,7 +146,7 @@ model QuestType {
   description String
   quests Quest[]
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model Inventory {
@@ -143,12 +154,13 @@ model Inventory {
   description String
   value Float
   data DateTime
-  status Int
+  status InventoryStatus @default(PLANEJADO)
   act_id Int?
   act Act? @relation(fields: [act_id], references: [id])
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  
+  updated_at  DateTime? @updatedAt
+  player Player @relation(fields: [player_id], references: [id])
+  player_id Int
 }
 
 model Installments {
@@ -158,7 +170,7 @@ model Installments {
   deadline DateTime
   paid Boolean
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
 }
 
 model Calendar {
@@ -166,5 +178,19 @@ model Calendar {
   data DateTime
   is_feriado Boolean
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  updated_at  DateTime? @updatedAt
+}
+
+enum ActStatus {
+  NAO_INICIADO
+  EM_ANDAMENTO
+  REMOVIDO
+  CONCLUIDO
+}
+
+enum InventoryStatus {
+  PLANEJADO
+  PENDENTE
+  REMOVIDO
+  PAGO
 }

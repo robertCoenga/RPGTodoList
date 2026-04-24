@@ -1,48 +1,58 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateQuestDto {
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @IsNumber()
   @Type(() => Number)
-  userId: number;
+  userId!: number;
 
   @IsNumber()
   @Type(() => Number)
-  actId: number?;
+  @IsOptional()
+  actId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  skillTreeId: number?;
+  @IsOptional()
+  skillTreeId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  buffId: number?;
+  @IsOptional()
+  buffId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  typeId: number;
+  typeId!: number;
 
   @IsNumber()
   @Type(() => Number)
-  complexity: number;
+  complexity!: number;
 
   @IsNumber()
   @Type(() => Number)
-  xp_reward: number;
+  xp_reward!: number;
 
   @IsDate()
   @Type(() => Date)
-  dateInicio: Date;
+  dateInicio!: Date;
 
   @IsDate()
   @Type(() => Date)
-  dateFim: Date;
+  dateFim!: Date;
 
   @IsBoolean()
   @Type(() => Boolean)
-  concluded: boolean;
+  concluded!: boolean;
 }

@@ -4,59 +4,64 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
 export class QuestResponseDto {
   @IsNumber()
   @Type(() => Number)
-  id: number;
+  id!: number;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @IsNumber()
   @Type(() => Number)
-  actId: number?;
+  @IsOptional()
+  actId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  skillTreeId: number?;
+  @IsOptional()
+  skillTreeId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  buffId: number?;
+  @IsOptional()
+  buffId?: number;
 
   @IsNumber()
   @Type(() => Number)
-  typeId: number;
+  typeId!: number;
 
   @IsNumber()
   @Type(() => Number)
-  complexity: number;
+  complexity!: number;
 
   @IsNumber()
   @Type(() => Number)
-  xp_reward: number;
+  xp_reward!: number;
 
   @IsDate()
   @Type(() => Date)
-  dateInicio: Date;
+  dateInicio!: Date;
 
   @IsDate()
   @Type(() => Date)
-  dateFim: Date;
+  dateFim!: Date;
 
   @IsBoolean()
   @Type(() => Boolean)
-  concluded: boolean;
+  concluded!: boolean;
 
   @IsDate()
   @Type(() => Date)
-  createdAt: Date;
+  createdAt!: Date;
 
   @IsDate()
   @Type(() => Date)
-  updatedAt: Date?;
+  @IsOptional()
+  updatedAt?: Date;
 }

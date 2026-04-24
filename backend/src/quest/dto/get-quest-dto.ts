@@ -9,5 +9,5 @@ export class GetQuestDto {
     { message: "O campo 'projectId' deve ser um numero inteiro" },
   )
   @Type(() => Number)
-  id: number;
+  id!: number;
 }
