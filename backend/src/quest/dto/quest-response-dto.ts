@@ -16,25 +16,9 @@ export class QuestResponseDto {
   @IsString()
   @IsNotEmpty()
   description!: string;
-
   @IsNumber()
   @Type(() => Number)
-  @IsOptional()
-  actId?: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  skillTreeId?: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  buffId?: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  typeId!: number;
+  type_id!: number;
 
   @IsNumber()
   @Type(() => Number)
@@ -46,11 +30,11 @@ export class QuestResponseDto {
 
   @IsDate()
   @Type(() => Date)
-  dateInicio!: Date;
+  data_inicio!: Date;
 
   @IsDate()
   @Type(() => Date)
-  dateFim!: Date;
+  data_fim!: Date;
 
   @IsBoolean()
   @Type(() => Boolean)
@@ -58,10 +42,10 @@ export class QuestResponseDto {
 
   @IsDate()
   @Type(() => Date)
-  createdAt!: Date;
+  created_at!: Date;
 
   @IsDate()
   @Type(() => Date)
   @IsOptional()
-  updatedAt?: Date;
+  updated_at?: Date;
 }

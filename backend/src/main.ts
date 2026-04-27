@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('QA - Reports')
-    .setDescription('API documentation of QA - Reports project')
+    .setTitle('RPG - LIFE')
+    .setDescription('API documentation of RPG - LIFE project')
     .setVersion('1.0')
     .build();
 

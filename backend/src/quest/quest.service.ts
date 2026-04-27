@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateQuestDto } from './dto/create-quest-dto';
 import { GetQuestDateDto } from './dto/get-quest-date-dto';
@@ -12,25 +12,23 @@ export class QuestService {
 
   async getQuestsByAct(actId: GetQuestDto): Promise<QuestsResponseDto> {
     try {
-      const quests = await this.prismaService.quest.findMany({
-        where: {
-          act_id: actId.id,
-        },
-        select: {
-          id: true,
-          description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
-          complexity: true,
-          xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
-          concluded: true,
-        },
-      });
+      const quests: QuestResponseDto[] =
+        await this.prismaService.quest.findMany({
+          where: {
+            act_id: actId.id,
+          },
+          select: {
+            id: true,
+            description: true,
+            type_id: true,
+            complexity: true,
+            xp_reward: true,
+            data_inicio: true,
+            data_fim: true,
+            concluded: true,
+            created_at: true,
+          },
+        });
       return { quests };
     } catch (error) {
       throw new Error('Error fetching quests by act');
@@ -39,26 +37,25 @@ export class QuestService {
 
   async getQuestsByBuff(buffId: GetQuestDto): Promise<QuestsResponseDto> {
     try {
-      const quests = await this.prismaService.quest.findMany({
+      const questArray = await this.prismaService.quest.findMany({
         where: {
-          buffId: buffId.id,
+          buff_id: buffId.id,
         },
         select: {
           id: true,
           description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
+          type_id: true,
           complexity: true,
           xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
+          data_inicio: true,
+          data_fim: true,
           concluded: true,
+          created_at: true,
         },
       });
-      return { quests };
+
+      const quests: QuestsResponseDto = { quests: questArray };
+      return { quests: questArray };
     } catch (error) {
       throw new Error('Error fetching quests by act');
     }
@@ -68,25 +65,24 @@ export class QuestService {
     skillTreeId: GetQuestDto,
   ): Promise<QuestsResponseDto> {
     try {
-      const quests = await this.prismaService.quest.findMany({
-        where: {
-          skillTreeId: skillTreeId.id,
-        },
-        select: {
-          id: true,
-          description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
-          complexity: true,
-          xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
-          concluded: true,
-        },
-      });
+      const quests: QuestResponseDto[] =
+        await this.prismaService.quest.findMany({
+          where: {
+            skll_id: skillTreeId.id,
+          },
+          select: {
+            id: true,
+            description: true,
+            act_id: true,
+            type_id: true,
+            complexity: true,
+            xp_reward: true,
+            data_inicio: true,
+            data_fim: true,
+            concluded: true,
+            created_at: true,
+          },
+        });
       return { quests };
     } catch (error) {
       throw new Error('Error fetching quests by act');
@@ -95,25 +91,27 @@ export class QuestService {
 
   async getQuestById(questId: GetQuestDto): Promise<QuestResponseDto> {
     try {
-      const quest = await this.prismaService.quest.findUnique({
-        where: {
-          id: questId.id,
-        },
-        select: {
-          id: true,
-          description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
-          complexity: true,
-          xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
-          concluded: true,
-        },
-      });
+      const quest: QuestResponseDto | null =
+        await this.prismaService.quest.findUnique({
+          where: {
+            id: questId.id,
+          },
+          select: {
+            id: true,
+            description: true,
+            type_id: true,
+            complexity: true,
+            xp_reward: true,
+            data_inicio: true,
+            data_fim: true,
+            concluded: true,
+            created_at: true,
+          },
+        });
+
+      if (!quest) {
+        throw new HttpException('Quest not found', HttpStatus.NOT_FOUND);
+      }
       return quest;
     } catch (error) {
       throw new Error('Error fetching quest by id');
@@ -123,16 +121,17 @@ export class QuestService {
   async getCalendarQuestsByMonth(
     month: GetQuestDateDto,
   ): Promise<QuestsResponseDto> {
-    const quests = await this.prismaService.quest.findMany({
+    const quests: QuestResponseDto[] = await this.prismaService.quest.findMany({
       where: {
-        dateInicio: {
+        player_id: month.playerId,
+        data_inicio: {
           gte: new Date(
             month.questDate.getFullYear(),
             month.questDate.getMonth(),
             1,
           ),
         },
-        dateFim: {
+        data_fim: {
           lt: new Date(
             month.questDate.getFullYear(),
             month.questDate.getMonth() + 1,
@@ -143,16 +142,13 @@ export class QuestService {
       select: {
         id: true,
         description: true,
-        userId: true,
-        actId: true,
-        skillTreeId: true,
-        buffId: true,
-        typeId: true,
+        type_id: true,
         complexity: true,
         xp_reward: true,
-        dateInicio: true,
-        dateFim: true,
+        data_inicio: true,
+        data_fim: true,
         concluded: true,
+        created_at: true,
       },
     });
     return { quests };
@@ -162,25 +158,24 @@ export class QuestService {
     day: GetQuestDateDto,
   ): Promise<QuestsResponseDto> {
     try {
-      const quests = await this.prismaService.quest.findMany({
-        where: {
-          OR: [{ dateInicio: day.questDate }, { dateFim: day.questDate }],
-        },
-        select: {
-          id: true,
-          description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
-          complexity: true,
-          xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
-          concluded: true,
-        },
-      });
+      const quests: QuestResponseDto[] =
+        await this.prismaService.quest.findMany({
+          where: {
+            player_id: day.playerId,
+            OR: [{ data_inicio: day.questDate }, { data_fim: day.questDate }],
+          },
+          select: {
+            id: true,
+            description: true,
+            type_id: true,
+            complexity: true,
+            xp_reward: true,
+            data_inicio: true,
+            data_fim: true,
+            concluded: true,
+            created_at: true,
+          },
+        });
       return { quests };
     } catch (error) {
       throw new Error('Error fetching quests by date');
@@ -189,35 +184,29 @@ export class QuestService {
 
   async createQuest(createQuest: CreateQuestDto): Promise<QuestResponseDto> {
     try {
-      const quest = await this.prismaService.quest.create({
+      const quest: QuestResponseDto = await this.prismaService.quest.create({
         data: {
           description: createQuest.description,
-          userId: createQuest.userId,
-          actId: createQuest.actId,
-          skillTreeId: createQuest.skillTreeId,
-          buffId: createQuest.buffId,
-          typeId: createQuest.typeId,
+          player_id: createQuest.userId,
+          act_id: createQuest.actId,
+          type_id: createQuest.typeId,
           complexity: createQuest.complexity,
           xp_reward: createQuest.xp_reward,
-          dateInicio: createQuest.dateInicio,
-          dateFim: createQuest.dateFim,
+          data_inicio: createQuest.dateInicio,
+          data_fim: createQuest.dateFim,
           concluded: createQuest.concluded,
         },
         select: {
           id: true,
           description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
+          type_id: true,
           complexity: true,
           xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
+          data_inicio: true,
+          data_fim: true,
           concluded: true,
-          createdAt: true,
-          updatedAt: false,
+          created_at: true,
+          updated_at: false,
         },
       });
       return quest;
@@ -231,38 +220,31 @@ export class QuestService {
     updateQuest: CreateQuestDto,
   ): Promise<QuestResponseDto> {
     try {
-      const quest = await this.prismaService.quest.update({
+      const quest: QuestResponseDto = await this.prismaService.quest.update({
         where: {
           id: questId.id,
         },
         data: {
           description: updateQuest.description,
-          userId: updateQuest.userId,
-          actId: updateQuest.actId,
-          skillTreeId: updateQuest.skillTreeId,
-          buffId: updateQuest.buffId,
-          typeId: updateQuest.typeId,
+          player_id: updateQuest.userId,
+          act_id: updateQuest.actId,
+          type_id: updateQuest.typeId,
           complexity: updateQuest.complexity,
           xp_reward: updateQuest.xp_reward,
-          dateInicio: updateQuest.dateInicio,
-          dateFim: updateQuest.dateFim,
+          data_inicio: updateQuest.dateInicio,
+          data_fim: updateQuest.dateFim,
           concluded: updateQuest.concluded,
         },
         select: {
           id: true,
           description: true,
-          userId: true,
-          actId: true,
-          skillTreeId: true,
-          buffId: true,
-          typeId: true,
+          type_id: true,
           complexity: true,
           xp_reward: true,
-          dateInicio: true,
-          dateFim: true,
+          data_inicio: true,
+          data_fim: true,
           concluded: true,
-          createdAt: true,
-          updatedAt: true,
+          created_at: true,
         },
       });
       return quest;

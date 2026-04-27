@@ -75,6 +75,7 @@ model Buff {
   type String
   player Player @relation(fields: [player_id], references: [id])
   player_id Int
+  quests Quest[]
   created_at  DateTime @default(now())
   updated_at  DateTime? @updatedAt
 }
@@ -88,6 +89,7 @@ model Skill {
   parent Skill? @relation("skillParent",fields: [parent_id], references: [id])
   children Skill[] @relation("skillParent")
   player Player @relation(fields: [player_id], references: [id])
+  quests Quest[]
   player_id Int
   created_at  DateTime @default(now())
   updated_at  DateTime? @updatedAt
@@ -133,10 +135,14 @@ model Quest {
   player_id Int
   type_id Int
   type QuestType @relation(fields: [type_id], references: [id])
-  compelexity Int
+  complexity Int
   xp_reward Int
   act_id Int?
   act Act? @relation(fields: [act_id], references: [id])
+  skll_id Int?
+  skill Skill? @relation(fields: [skll_id], references: [id])
+  buff_id Int?
+  buff Buff? @relation(fields: [buff_id], references: [id])
   created_at  DateTime @default(now())
   updated_at  DateTime? @updatedAt
 }
