@@ -8,6 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { CreateQuestDto } from './dto/create-quest-dto';
+import { GetCalendarMonthDto } from './dto/get-month.dto';
 import { GetQuestDateDto } from './dto/get-quest-date-dto';
 import { GetQuestDto } from './dto/get-quest-dto';
 import { QuestService } from './quest.service';
@@ -51,8 +52,8 @@ export class QuestController {
     }
   }
 
-  @Get('/month/:month')
-  async getCalendarQuestsByMonth(@Param() month: GetQuestDateDto) {
+  @Get('/month')
+  async getCalendarQuestsByMonth(@Param() month: GetCalendarMonthDto) {
     try {
       return await this.questService.getCalendarQuestsByMonth(month);
     } catch (error) {
@@ -70,7 +71,7 @@ export class QuestController {
   }
 
   @Post('/create')
-  async createQuest(@Body('questData') questData: CreateQuestDto) {
+  async createQuest(@Body() questData: CreateQuestDto) {
     try {
       return await this.questService.createQuest(questData);
     } catch (error) {

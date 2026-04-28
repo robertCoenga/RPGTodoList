@@ -2,7 +2,7 @@ export class ActMilestonesDto {
   id!: number;
   description!: string;
   finished!: boolean;
-  deadline!: DataViewConstructor;
+  deadline!: Date;
   reward!: string;
   created_at!: Date;
   updated_at?: Date;

@@ -8,6 +8,5 @@ export class GetActDto {
   id?: number;
   @IsNumber({}, { message: 'player_id must be a number' })
   @Type(() => Number)
-  @IsOptional()
   player_id?: number;
 }

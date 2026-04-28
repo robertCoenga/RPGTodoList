@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ActModule } from './act/act.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PlayerModule } from './player/player.module';
@@ -14,6 +15,7 @@ import { QuestModule } from './quest/quest.module';
     PlayerModule,
     PrismaModule,
     QuestModule,
+    ActModule,
   ],
   controllers: [AppController],
   providers: [AppService],
