@@ -6,9 +6,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreateQuestDto } from './dto/create-quest-dto';
-import { GetCalendarMonthDto } from './dto/get-month.dto';
 import { GetQuestDateDto } from './dto/get-quest-date-dto';
 import { GetQuestDto } from './dto/get-quest-dto';
 import { QuestService } from './quest.service';
@@ -16,7 +16,7 @@ import { QuestService } from './quest.service';
 @Controller('quest')
 export class QuestController {
   constructor(private readonly questService: QuestService) {}
-  @Get('/act/:id')
+  @Get('act/:id')
   async getQuestsByAct(@Param() actId: GetQuestDto) {
     try {
       return await this.questService.getQuestsByAct(actId);
@@ -25,7 +25,7 @@ export class QuestController {
     }
   }
 
-  @Get('/buff/:id')
+  @Get('buff/:id')
   async getQuestsByBuff(@Param() buffId: GetQuestDto) {
     try {
       return await this.questService.getQuestsByBuff(buffId);
@@ -34,7 +34,7 @@ export class QuestController {
     }
   }
 
-  @Get('/skill-tree/:id')
+  @Get('skill-tree/:id')
   async getQuestsBySkillTree(@Param() skillTreeId: GetQuestDto) {
     try {
       return await this.questService.getQuestsBySkillTree(skillTreeId);
@@ -42,22 +42,21 @@ export class QuestController {
       throw new Error('Error fetching quests by skill tree');
     }
   }
-
-  @Get('/:id')
-  async getQuestById(@Param() id: GetQuestDto) {
+  @Get('month')
+  async getCalendarQuestsByMonth(
+    @Query('playerId') playerId: string,
+    @Query('month') month: string,
+    @Query('year') year: string,
+  ): Promise<Object> {
     try {
-      return await this.questService.getQuestById(id);
+      console.log(playerId, month, year);
+      return await this.questService.getCalendarQuestsByMonth({
+        playerId,
+        month,
+        year,
+      });
     } catch (error) {
-      throw new Error('Error fetching quest by id');
-    }
-  }
-
-  @Get('/month')
-  async getCalendarQuestsByMonth(@Param() month: GetCalendarMonthDto) {
-    try {
-      return await this.questService.getCalendarQuestsByMonth(month);
-    } catch (error) {
-      throw new Error('Error fetching calendar quests by month');
+      throw new Error('Error fetching calendar quests by month' + error);
     }
   }
 
@@ -67,6 +66,16 @@ export class QuestController {
       return await this.questService.getCalendarQuestsByDate(date);
     } catch (error) {
       throw new Error('Error fetching calendar quests by date');
+    }
+  }
+
+  @Get(':id')
+  async getQuestById(@Param('id') id: string) {
+    try {
+      const quest: GetQuestDto = { id: Number(id) };
+      return await this.questService.getQuestById(quest);
+    } catch (error) {
+      throw new Error('Error fetching quest by id');
     }
   }
 

@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateQuestDto } from './dto/create-quest-dto';
-import { GetCalendarMonthDto } from './dto/get-month.dto';
 import { GetQuestDateDto } from './dto/get-quest-date-dto';
 import { GetQuestDto } from './dto/get-quest-dto';
 import { QuestResponseDto } from './dto/quest-response-dto';
@@ -119,85 +118,96 @@ export class QuestService {
     }
   }
 
-  async getCalendarQuestsByMonth({ year, month }: GetCalendarMonthDto) {
-    const start = new Date(Date.UTC(year, month - 1, 1));
-    const end = new Date(Date.UTC(year, month, 0, 23, 59, 59));
-
-    // 🔹 Busca calendário
-    const calendarDays = await this.prismaService.calendar.findMany({
-      where: {
-        data: {
-          gte: start,
-          lte: end,
+  async getCalendarQuestsByMonth(dateDto: {
+    playerId: string;
+    month: string;
+    year: string;
+  }): Promise<Object> {
+    try {
+      const month = Number.parseInt(dateDto.month);
+      const year = Number.parseInt(dateDto.year);
+      const start = new Date(Date.UTC(year, month - 1, 1));
+      const end = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+      console.log('chegou aqui');
+      // 🔹 Busca calendário
+      const calendarDays = await this.prismaService.calendar.findMany({
+        where: {
+          data: {
+            gte: start,
+            lte: end,
+          },
         },
-      },
-    });
-
-    // 🔹 Busca quests
-    const quests = await this.prismaService.quest.findMany({
-      where: {
-        data_inicio: {
-          gte: start,
-          lte: end,
-        },
-      },
-    });
-
-    // 🔹 Estrutura base
-    const result: Record<string, { isFeriado: boolean; quests: any[] }> = {};
-
-    // 🔹 Preenche dias
-    calendarDays.forEach((day) => {
-      const key = day.data.toISOString().split('T')[0];
-
-      result[key] = {
-        isFeriado: day.is_feriado,
-        quests: [],
-      };
-    });
-
-    // 🔹 Adiciona quests
-    quests.forEach((quest) => {
-      const key = quest.data_inicio.toISOString().split('T')[0];
-
-      if (!result[key]) {
-        result[key] = { isFeriado: false, quests: [] };
-      }
-
-      result[key].quests.push({
-        id: quest.id,
-        title: quest.description,
-        time: quest.data_inicio,
-        endTime: quest.data_fim,
-        completed: quest.concluded,
       });
-    });
 
-    return result;
+      // 🔹 Busca quests
+      const quests = await this.prismaService.quest.findMany({
+        where: {
+          player_id: Number(dateDto.playerId),
+          data_inicio: {
+            gte: start,
+            lte: end,
+          },
+        },
+      });
+
+      // 🔹 Estrutura base
+      const result: Record<string, { isFeriado: boolean; quests: any[] }> = {};
+
+      // 🔹 Preenche dias
+      calendarDays.forEach((day) => {
+        const key = day.data.toISOString().split('T')[0];
+
+        result[key] = {
+          isFeriado: day.is_feriado,
+          quests: [],
+        };
+      });
+
+      // 🔹 Adiciona quests
+      quests.forEach((quest) => {
+        const key = quest.data_inicio.toISOString().split('T')[0];
+
+        if (!result[key]) {
+          result[key] = { isFeriado: false, quests: [] };
+        }
+
+        result[key].quests.push({
+          id: quest.id,
+          title: quest.description,
+          time: quest.data_inicio,
+          endTime: quest.data_fim,
+          completed: quest.concluded,
+        });
+      });
+
+      return result;
+    } catch (error) {
+      throw new Error('Error fetching calendar quests by month');
+    }
   }
 
   async getCalendarQuestsByDate(
     day: GetQuestDateDto,
   ): Promise<QuestsResponseDto> {
     try {
-      const quests: QuestResponseDto[] =
-        await this.prismaService.quest.findMany({
-          where: {
-            player_id: day.playerId,
-            OR: [{ data_inicio: day.questDate }, { data_fim: day.questDate }],
-          },
-          select: {
-            id: true,
-            description: true,
-            type_id: true,
-            complexity: true,
-            xp_reward: true,
-            data_inicio: true,
-            data_fim: true,
-            concluded: true,
-            created_at: true,
-          },
-        });
+      const quests: QuestResponseDto[] = [];
+      // await this.prismaService.quest.findMany({
+      //   where: {
+      //     player_id: day.playerId,
+      //     OR: [{ data_inicio: day.questDate }, { data_fim: day.questDate }],
+      //   },
+      //   select: {
+      //     id: true,
+      //     description: true,
+      //     type_id: true,
+      //     complexity: true,
+      //     xp_reward: true,
+      //     data_inicio: true,
+      //     data_fim: true,
+      //     concluded: true,
+      //     created_at: true,
+      //   },
+      // });
       return { quests };
     } catch (error) {
       throw new Error('Error fetching quests by date');

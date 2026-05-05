@@ -1,12 +1,12 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsNumber } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class GetQuestDateDto {
-  @IsNumber({}, { message: 'playerId must be a number' })
-  @Type(() => Number)
-  playerId!: number;
+  @IsString({ message: 'playerId must be a number' })
+  playerId!: string;
 
-  @IsDate({ message: 'questDate must be a valid date' })
-  @Type(() => Date)
-  questDate!: Date;
+  @IsString({ message: 'questDate must be a valid date' })
+  month!: string;
+
+  @IsString({ message: 'questDate must be a valid date' })
+  year!: string;
 }
