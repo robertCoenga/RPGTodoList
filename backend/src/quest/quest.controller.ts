@@ -60,6 +60,22 @@ export class QuestController {
     }
   }
 
+  @Get('week')
+  async getQuestsByWeek(
+    @Query('playerId') playerId: string,
+    @Query('dateWeek') dateWeek: string,
+  ): Promise<Object> {
+    try {
+      console.log(playerId, dateWeek);
+      return await this.questService.getWeekQuestsByDate({
+        playerId,
+        dateWeek
+      });
+    } catch (error) {
+      throw new Error('Error fetching calendar quests by month' + error);
+    }
+  }
+
   @Get('/date/:date')
   async getCalendarQuestsByDate(@Param() date: GetQuestDateDto) {
     try {

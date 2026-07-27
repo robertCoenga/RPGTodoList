@@ -5,6 +5,7 @@ import { GetQuestDateDto } from './dto/get-quest-date-dto';
 import { GetQuestDto } from './dto/get-quest-dto';
 import { QuestResponseDto } from './dto/quest-response-dto';
 import { QuestsResponseDto } from './dto/quests-response-dto';
+import { addDays, format, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class QuestService {
@@ -186,6 +187,60 @@ export class QuestService {
     }
   }
 
+  async getWeekQuestsByDate(weekDto: {playerId: string, dateWeek: string}): Promise<Object>
+  {
+    try {
+      const day = new Date(weekDto.dateWeek); // terça-feira
+      const monday = startOfWeek(day, { weekStartsOn: 1 });
+      const week = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+
+      const start = week[0]
+      const end = week[week.length]
+
+      const result: Record<string, { quests: any[] }> = {};
+
+      const quests = await this.prismaService.quest.findMany({
+        where: {
+          player_id: Number(weekDto.playerId),
+          data_inicio: {
+            gte: start,
+            lte: end,
+          },
+        },
+        include: {
+          buff: true,
+          skill: true,
+          type: true,
+          act: true,
+        },
+      });
+
+        week.forEach((day) => {
+          const key = format(day,"yyyy-MM-dd");
+
+          result[key] = {
+            quests: [],
+          };
+        });
+
+      // 🔹 Adiciona quests
+      quests.forEach((quest) => {
+        const key = quest.data_inicio.toISOString().split('T')[0];
+
+        if (!result[key]) {
+          result[key] = { quests: [] };
+        }
+
+        result[key].quests.push(quest);
+      });
+
+      return result;
+
+    } catch (error) {
+      throw new Error('Error fetch week quests')
+    }
+
+  }
   async getCalendarQuestsByDate(
     day: GetQuestDateDto,
   ): Promise<QuestsResponseDto> {

@@ -22,8 +22,8 @@ interface Task {
 
 interface DayDetailModalProps {
   dayName: string;
-  date: string;
-  tasks: Task[];
+  date: String;
+  tasks: quest[];
   onClose: () => void;
   onTaskToggle: (taskId: string) => void;
 }
@@ -136,32 +136,26 @@ export function DayDetailModal({
                         </div>
                       )}
 
-                      {task.tag && (
-                        <span
-                          className={`text-xs px-2 py-1 rounded border font-mono ${tagColors[task.tag] || tagColors["Normal"]}`}
-                        >
-                          {task.tag}
-                        </span>
-                      )}
+             
 
-                      {task.course && (
+                      {task.skill && (
                         <div className="flex items-center gap-1 text-xs text-slate-400">
                           <BookOpen size={14} />
-                          <span>{task.course}</span>
+                          <span>{task.skill.name}</span>
                         </div>
                       )}
 
-                      {task.project && (
+                      {task.act && (
                         <div className="flex items-center gap-1 text-xs text-slate-400">
                           <Zap size={14} />
-                          <span>{task.project}</span>
+                          <span>{task.act.name}</span>
                         </div>
                       )}
 
-                      {task.habit && (
+                      {task.buff && (
                         <div className="flex items-center gap-1 text-xs text-slate-400">
                           <Tag size={14} />
-                          <span>{task.habit}</span>
+                          <span>{task.buff.name}</span>
                         </div>
                       )}
                     </div>

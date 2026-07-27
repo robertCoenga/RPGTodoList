@@ -3,8 +3,9 @@ import { useState } from "react";
 import { CalendarWithTasks } from "../../components/CalendarWithTasks";
 import { DayCard } from "../../components/DayCard";
 import { DayDetailModal } from "../../components/DayDetailModal";
-import { ExpandableSidebar } from "../../components/ExpandableSidebar";
-import { SideCard } from "../../components/SideCard";
+import {questService} from "../../../services/quest.service"
+import { useQuery } from "@tanstack/react-query";
+import { getWeekDay } from "@/shared/enums/weekNames.enum";
 
 /**
  * Página principal do RPG Personal Manager
@@ -17,239 +18,52 @@ import { SideCard } from "../../components/SideCard";
  * - Modal interativo com detalhes de tarefas
  */
 
-interface Task {
-  id: string;
-  title: string;
-  time: string;
-  tag: string;
-  course?: string;
-  project?: string;
-  habit?: string;
-  completed: boolean;
-}
 
 interface DayData {
-  id: string;
-  day: string;
   dayName: string;
-  date: string;
-  imageUrl: string;
-  tasksCompleted: number;
-  totalTasks: number;
-  color: string;
-  tasks: Task[];
+  date: String;
+  quests: quest[];
 }
 
 export default function Home() {
   const [selectedDay, setSelectedDay] = useState<DayData | null>(null);
-  const [tasks, setTasks] = useState<Record<string, Task[]>>({
-    monday: [
-      {
-        id: "1",
-        title: "Revisar código do projeto",
-        time: "09:00",
-        tag: "Importante",
-        project: "Projeto X",
-        completed: true
-      },
-      {
-        id: "2",
-        title: "Treino de musculação",
-        time: "18:00",
-        tag: "Normal",
-        habit: "Exercício",
-        completed: false
-      },
-      {
-        id: "3",
-        title: "Estudar React",
-        time: "20:00",
-        tag: "Normal",
-        course: "React Avançado",
-        completed: false
-      }
-    ],
-    tuesday: [
-      {
-        id: "4",
-        title: "Reunião com time",
-        time: "10:00",
-        tag: "Importante",
-        project: "Projeto X",
-        completed: true
-      },
-      {
-        id: "5",
-        title: "Escrever documentação",
-        time: "14:00",
-        tag: "Normal",
-        project: "Projeto X",
-        completed: false
-      },
-      {
-        id: "6",
-        title: "Meditação",
-        time: "07:00",
-        tag: "Normal",
-        habit: "Bem-estar",
-        completed: true
-      }
-    ],
-    wednesday: [
-      {
-        id: "7",
-        title: "Code review",
-        time: "11:00",
-        tag: "Importante",
-        project: "Projeto Y",
-        completed: false
-      },
-      {
-        id: "8",
-        title: "Treino cardio",
-        time: "19:00",
-        tag: "Normal",
-        habit: "Exercício",
-        completed: false
-      }
-    ],
-    thursday: [
-      {
-        id: "9",
-        title: "Planejamento semanal",
-        time: "09:00",
-        tag: "Importante",
-        completed: false
-      },
-      {
-        id: "10",
-        title: "Estudar TypeScript",
-        time: "20:00",
-        tag: "Normal",
-        course: "TypeScript Pro",
-        completed: false
-      },
-      {
-        id: "11",
-        title: "Treino de musculação",
-        time: "18:00",
-        tag: "Normal",
-        habit: "Exercício",
-        completed: false
-      }
-    ],
-    friday: [
-      {
-        id: "12",
-        title: "Deploy em produção",
-        time: "15:00",
-        tag: "Importante",
-        project: "Projeto X",
-        completed: false
-      },
-      {
-        id: "13",
-        title: "Retrospectiva",
-        time: "16:00",
-        tag: "Normal",
-        completed: false
-      },
-      {
-        id: "14",
-        title: "Relaxamento",
-        time: "20:00",
-        tag: "Baixa",
-        habit: "Bem-estar",
-        completed: false
-      }
-    ]
-  });
-
-  const daysData: DayData[] = [
-    {
-      id: "monday",
-      day: "DIA 1",
-      dayName: "Segunda",
-      date: "18 de Março",
-      imageUrl:
-        "https://d2xsxph8kpxj0f.cloudfront.net/310519663250832866/ctKp2BhseTiuMbpXXeDTGv/day-monday-neon-8XGeTsGQTp9uWBgdXTGbfJ.webp",
-      tasksCompleted: 2,
-      totalTasks: 3,
-      color: "orange",
-      tasks: tasks.monday
-    },
-    {
-      id: "tuesday",
-      day: "DIA 2",
-      dayName: "Terça",
-      date: "19 de Março",
-      imageUrl:
-        "https://d2xsxph8kpxj0f.cloudfront.net/310519663250832866/ctKp2BhseTiuMbpXXeDTGv/day-tuesday-neon-mXkF3r4F2yw8KbKkHf59yf.webp",
-      tasksCompleted: 2,
-      totalTasks: 3,
-      color: "green",
-      tasks: tasks.tuesday
-    },
-    {
-      id: "wednesday",
-      day: "DIA 3",
-      dayName: "Quarta",
-      date: "20 de Março",
-      imageUrl:
-        "https://d2xsxph8kpxj0f.cloudfront.net/310519663250832866/ctKp2BhseTiuMbpXXeDTGv/day-wednesday-neon-bGjdE5CMrnuS9TrfJhy89Z.webp",
-      tasksCompleted: 0,
-      totalTasks: 2,
-      color: "blue",
-      tasks: tasks.wednesday
-    },
-    {
-      id: "thursday",
-      day: "DIA 4",
-      dayName: "Quinta",
-      date: "21 de Março",
-      imageUrl:
-        "https://d2xsxph8kpxj0f.cloudfront.net/310519663250832866/ctKp2BhseTiuMbpXXeDTGv/day-thursday-neon-c9t4FgeRQZiXUNygeotN6k.webp",
-      tasksCompleted: 0,
-      totalTasks: 3,
-      color: "purple",
-      tasks: tasks.thursday
-    },
-    {
-      id: "friday",
-      day: "DIA 5",
-      dayName: "Sexta",
-      date: "22 de Março",
-      imageUrl:
-        "https://d2xsxph8kpxj0f.cloudfront.net/310519663250832866/ctKp2BhseTiuMbpXXeDTGv/day-friday-neon-RsmBeCqZSDa8QsaBFjh9BX.webp",
-      tasksCompleted: 0,
-      totalTasks: 3,
-      color: "pink",
-      tasks: tasks.friday
+  const dateWeek = new Date("2026-04-28")
+  const {data,isLoading, error} = useQuery<calendar>({
+      queryKey: ["calendarWeek", dateWeek],
+      queryFn: async () => {
+       return questService.getQuestsByWeek("1",String(dateWeek));
     }
-  ];
+  })
+
+  let days: DayData[] = Object.entries(data ?? {}).map(([date, day]) => ({
+      dayName: getWeekDay(new Date(`${date}T00:00:00`).getDay()),
+      date,
+      quests: day.quests,
+    }));
+      
 
   const handleTaskToggle = (taskId: string) => {
     if (!selectedDay) return;
 
-    setTasks((prev) => ({
-      ...prev,
-      [selectedDay.id]: prev[selectedDay.id].map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    }));
+    // setTasks((prev) => ({
+    //   ...prev,
+    //   [selectedDay.id]: prev[selectedDay.id].map((task) =>
+    //     task.id === taskId ? { ...task, completed: !task.completed } : task
+    //   )
+    // }));
 
-    setSelectedDay((prev) => {
-      if (!prev) return null;
-      const updatedTasks = prev.tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      );
-      const newCompleted = updatedTasks.filter((t) => t.completed).length;
-      return {
-        ...prev,
-        tasksCompleted: newCompleted,
-        tasks: updatedTasks
-      };
-    });
+    // setSelectedDay((prev) => {
+    //   if (!prev) return null;
+    //   const updatedTasks = prev.tasks.map((task) =>
+    //     task.id === taskId ? { ...task, completed: !task.completed } : task
+    //   );
+    //   const newCompleted = updatedTasks.filter((t) => t.completed).length;
+    //   return {
+    //     ...prev,
+    //     tasksCompleted: newCompleted,
+    //     tasks: updatedTasks
+    //   };
+    // });
   };
 
   return (
@@ -266,20 +80,21 @@ export default function Home() {
                   Quests
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 border border-[#be002a] p-9 rounded-xl">
-                  {daysData.map((day) => (
+                  {days.map((day) => (
                     <DayCard
-                      key={day.id}
-                      day={day.day}
+                      key={day.dayName}
+                      day={day.date}
                       dayName={day.dayName}
-                      imageUrl={day.imageUrl}
-                      tasksCompleted={day.tasksCompleted}
-                      totalTasks={day.totalTasks}
-                      color={day.color}
+                      tasksCompleted={(day.quests).filter(
+                            (t) => t.completed
+                          ).length}
+                      totalTasks={day.quests.length}
+                      color={"green"}
                       onClick={() => {
                         const updatedDay = {
                           ...day,
-                          tasks: tasks[day.id] || day.tasks,
-                          tasksCompleted: (tasks[day.id] || day.tasks).filter(
+                          tasks: day.quests,
+                          tasksCompleted: (day.quests).filter(
                             (t) => t.completed
                           ).length
                         };
@@ -296,9 +111,8 @@ export default function Home() {
                   Calendário
                 </h2>
                 <CalendarWithTasks
-                  month={2}
+                  month={4}
                   year={2026}
-                  allTasks={tasks}
                   onDateClick={(date) => console.log("Data clicada:", date)}
                 />
               </div>
@@ -312,7 +126,7 @@ export default function Home() {
         <DayDetailModal
           dayName={selectedDay.dayName}
           date={selectedDay.date}
-          tasks={selectedDay.tasks}
+          tasks={selectedDay.quests}
           onClose={() => setSelectedDay(null)}
           onTaskToggle={handleTaskToggle}
         />

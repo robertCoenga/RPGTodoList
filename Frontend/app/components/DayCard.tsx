@@ -3,9 +3,8 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 interface DayCardProps {
-  day: string;
+  day: String;
   dayName: string;
-  imageUrl: string;
   tasksCompleted: number;
   totalTasks: number;
   color: string;
@@ -20,7 +19,6 @@ interface DayCardProps {
 export function DayCard({
   day,
   dayName,
-  imageUrl,
   tasksCompleted,
   totalTasks,
   color,
@@ -37,6 +35,37 @@ export function DayCard({
     pink: "#ec4899"
   };
 
+   const imageUrl = (day: string) => {
+
+     const stringBase = "../../../days/"
+
+      switch (day)
+      {
+        case "Domingo":
+          return stringBase + "Domingo.gif"
+          break;
+        case "Segunda":
+            return stringBase + "Segunda.gif"
+            break;
+        case "Terça":
+            return stringBase + "Terça.gif"
+            break;
+        case "Quarta":
+            return stringBase + "Quarta.gif"
+            break;
+        case "Quinta":
+            return stringBase + "Quinta.gif"
+            break;
+        case "Sexta":
+            return stringBase + "Sexta.gif"
+            break;
+        case "Sábado":
+            return stringBase + "Sabado.gif"
+            break;
+
+      }
+   }
+
   return (
     <div
       className="relative h-48 rounded-lg overflow-hidden cursor-pointer group transition-all duration-300 hover:scale-105"
@@ -46,7 +75,7 @@ export function DayCard({
     >
       {/* Background Image */}
       <img
-        src={imageUrl}
+        src={imageUrl(dayName)}
         alt={dayName}
         className="absolute inset-0 w-full h-full object-cover"
       />

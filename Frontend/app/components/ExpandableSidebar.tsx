@@ -40,7 +40,7 @@ export function ExpandableSidebar() {
       name: "Escritório",
       icon: <GiScrollQuill size={24} />,
       color: "text-[#7545d6]",
-      link: "/office"
+      link: "/act"
     },
     {
       id: "2",
@@ -54,7 +54,7 @@ export function ExpandableSidebar() {
       name: "Cofre",
       icon: <SiDungeonsanddragons size={30} />,
       color: "text-yellow-300",
-      link: "/vault"
+      link: "/inventory"
     },
     {
       id: "4",

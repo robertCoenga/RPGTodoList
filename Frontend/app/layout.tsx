@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ExpandableSidebar } from "./components/ExpandableSidebar";
+import Providers from "./providers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +32,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex">
         <ExpandableSidebar/>
-          
           <main className="flex-1">
-          {children}
-        </main>
-        </body>
+            <Providers >
+              {children}
+            </Providers>
+          </main>
+      </body>
     </html>
   );
 }

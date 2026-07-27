@@ -1,13 +1,15 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { questService } from "@/services/quest.service";
+import { useQuery } from "@tanstack/react-query";
 
 interface Task {
   id: string;
   title: string;
   time: string;
   endTime?: string;
-  tag: string;
+  tag?: string;
   course?: string;
   project?: string;
   habit?: string;
@@ -19,15 +21,21 @@ interface CalendarDay {
   date: number;
   month: number;
   year: number;
-  tasks: Task[];
+  quests: quest[];
   isCurrentMonth: boolean;
 }
 
 interface CalendarWithTasksProps {
   month: number;
   year: number;
-  allTasks: Record<string, Task[]>;
   onDateClick?: (date: number) => void;
+}
+
+interface CalendarResponse {
+  [date: string]: {
+    isFeriado: boolean;
+    quests: quest[];
+  };
 }
 
 /**
@@ -38,17 +46,24 @@ interface CalendarWithTasksProps {
 export function CalendarWithTasks({
   month,
   year,
-  allTasks,
   onDateClick
 }: CalendarWithTasksProps) {
-  const [currentMonth, setCurrentMonth] = useState(month);
+
+
+  const [currentMonth, setCurrentMonth] = useState(month -1);
   const [currentYear, setCurrentYear] = useState(year);
+
+    const {data,isLoading, error} = useQuery({
+      queryKey: ["calendarMonth", year, month],
+      queryFn: async () => {
+        return questService.getCalendarQuestsByMonth("1",String(month),String(currentYear));
+    }
+  })
 
   // Gerar calendário
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-
+  const daysInMonth =  data? Object.keys(data).length: 31;
+  const daysInPrevMonth = new Date(currentYear, currentMonth -1, 0).getDate();
   const calendarDays: CalendarDay[] = [];
 
   // Dias do mês anterior
@@ -57,7 +72,7 @@ export function CalendarWithTasks({
       date: daysInPrevMonth - i,
       month: currentMonth - 1,
       year: currentMonth === 0 ? currentYear - 1 : currentYear,
-      tasks: [],
+      quests: [],
       isCurrentMonth: false
     });
   }
@@ -65,23 +80,14 @@ export function CalendarWithTasks({
   // Dias do mês atual
   for (let i = 1; i <= daysInMonth; i++) {
     const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-    const dayOfWeek = (firstDay + i - 1) % 7;
-    const dayName = [
-      "sunday",
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday"
-    ][dayOfWeek];
+    const dayData = data?.[dateKey];
 
     calendarDays.push({
       date: i,
       month: currentMonth,
       year: currentYear,
-      tasks: allTasks[dayName] || [],
-      isCurrentMonth: true
+      quests: dayData?.quests ?? [],
+      isCurrentMonth: true,
     });
   }
 
@@ -92,7 +98,7 @@ export function CalendarWithTasks({
       date: i,
       month: currentMonth + 1,
       year: currentMonth === 11 ? currentYear + 1 : currentYear,
-      tasks: [],
+      quests: [],
       isCurrentMonth: false
     });
   }
@@ -213,23 +219,20 @@ export function CalendarWithTasks({
 
               {/* Tasks */}
               <div className="space-y-1">
-                {day.tasks.slice(0, 3).map((task) => (
+                {day.quests.slice(0, 3).map((quest) => (
                   <div
-                    key={task.id}
-                    className={`text-xs p-1 rounded border truncate font-mono transition-all duration-300 hover:shadow-lg ${getTaskColor(task.tag)}`}
-                    title={`${task.title} - ${task.time}${task.endTime ? ` até ${task.endTime}` : ""}`}
+                    key={String(quest.id)}
+                    className={`text-xs p-1 rounded border truncate font-mono transition-all duration-300 hover:shadow-lg ${getTaskColor( quest.completed? "Baixa": "Importante")}`}
+                    title={`${quest.title}`}
                   >
-                    <div className="font-bold text-xs truncate">
-                      {task.time}
-                    </div>
-                    <div className="text-xs truncate">{task.title}</div>
+                    <div className="text-xs truncate">{quest.title}</div>
                   </div>
                 ))}
 
                 {/* Show more indicator */}
-                {day.tasks.length > 3 && (
+                {day.quests.length > 3 && (
                   <div className="text-xs text-cyan-400 font-mono px-1">
-                    +{day.tasks.length - 3} mais
+                    +{day.quests.length - 3} mais
                   </div>
                 )}
               </div>
